@@ -4,79 +4,52 @@ $purple: #A050BE;
 $light-grey: #eaeaeb;
 $dark-grey: #464646;
 $yellow: #FABE50;
-
 $img_width: 45%;
 
-.header {
-  font-family: Arial, Helvetica, sans-serif;
+%no-decoration { text-decoration: none;}
+%u-decoration { text-decoration: underline;}
 
-  &__logo {
-    text-align: center;
-  }
-
-  &_img {
-    max-width: 350px;
-  }
-
-  .menu {
-    &__list {
-      display: flex;
-      justify-content: center;
-      border-top: 1px solid $light-grey;
-      border-bottom: 1px solid $light-grey;
-      margin-left: auto;
-      margin-right: auto;
-      width: 80%;
-      padding: 20px 0;
-    }
-
-    &__links {
-      position: relative;
-
-      &:not(:last-child)::after {
-        content: "";
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        margin: auto;
-        height: 15px;
-        width: 1px;
-        background-color: $light-grey;
-      }
-
-      &__link {
-        padding: 0 25px;
-        color: $dark-grey;
-
-        &:hover {
-          color: $purple;
-        }
-      }
-    }
-  }
+@mixin reset-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
-/*
-Este trecho de estilo se refere ao rodapé do blog
-*/
-.footer {
-  text-align: center;
-  padding: 20px 0;
-  font-family: Arial, Helvetica, sans-serif;
-  //Este trecho de estilo posiciona o footer na parte de baixo da nossa tela
-  position: relative;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
+@mixin flx($property, $jty-cnt) {
+  display: flex;
+  #{$property}: $jty-cnt;
+}
 
-  &__logo {
-    max-width: 100px;
-  }
+@mixin for-phone-only {
+  @media(max-width: 767.98px) { @content; }
+}
 
-  &__txt {
-    margin: auto;
-    font-size: 14px;
-  }
+@mixin for-tablet-only {
+  @media(min-width:768px) and (max-width: 1199.98px) { @content; }
+}
+
+@mixin for-desktop-only {
+  @media (min-width: 1200px ) { @content; }
+}
+
+@function calculateRem($size) {
+  @return $size / 16px * 1rem;
+}
+
+@mixin fontSize($size) {
+  font-size: calculateRem($size)
+}
+
+@import 'header', 'footer', 'about', 'article', 'collection', 'contact';
+
+$directions: top, bottom, left, right;
+$layout-margin-size: 10px;
+
+@each $direction in $directions {
+  %no-margin-#{$direction} {margin-#{$direction}: 0;}
+  %default-margin-#{$direction} {margin-#{$direction}: $layout-margin-size;}
+  %double-margin-#{$direction} {margin-#{$direction}: $layout-margin-size * 2;}
+  %half-margin-#{$direction} {margin-#{$direction}: $layout-margin-size / 2;}
 }
 
 .main {
@@ -86,6 +59,9 @@ Este trecho de estilo se refere ao rodapé do blog
   font-family: Arial, Helvetica, sans-serif;
 
   &__content {
+    @include for-phone-only {
+      width: 100%;
+    }
     width: 70%;
     padding: 40px 8px;
   }
@@ -99,7 +75,7 @@ Este trecho de estilo se refere ao rodapé do blog
 
   &__title {
     text-decoration: none;
-    font-size: 22px;
+    @include fontSize(22px);
     color: $dark-grey;
     letter-spacing: 1.5;
     
@@ -112,12 +88,13 @@ Este trecho de estilo se refere ao rodapé do blog
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 10px;
-    margin-bottom: 20px;
+    @extend %default-margin-top, %default-margin-bottom;
+    //margin-top: 10px;
+    //margin-bottom: 20px;
   }
 
   &__date {
-    margin: 0 10px;
+    @extend %no-margin-top, %no-margin-bottom, %default-margin-left, %default-margin-right;
     font-size: 12px;
     font-style: italic;
   }
@@ -127,6 +104,7 @@ Este trecho de estilo se refere ao rodapé do blog
     padding: 5px 7px;
     color: $purple;
     border: 1px solid $purple;
+    @extend %no-margin-top, %no-margin-bottom, %default-margin-left, %default-margin-right;
   }
 
   &__details {
@@ -193,81 +171,64 @@ Este trecho de estilo se refere ao rodapé do blog
       color: $purple;
     }
   }
-}
 
-.about {
-  width: 80%;
-  margin: 0 auto 40px;
-  font-family: Arial, Helvetica, sans-serif;
-
-  &__title {
-    background-color: $light-grey;
-    text-align: center;
-    padding: 20px;
+  &__sidebar {
+    width: 25%;
+    padding: 40px 10px;;
   }
 
-  &__h1 {
-    font-size: 22px;
-    color: $dark-grey;
-    letter-spacing: 1px;
-    margin: 5px 0 10px 0;
-  }
+  .sidebar {
+    &__top {
+      border: 1px solid $light-grey;
+      padding: 15px 20px;
+    }
 
-  .breadcrumb {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    &__title {
+      background-color: $yellow;
+      text-align: center;
+      padding: 10px 20px;
+      margin: 0;
+      letter-spacing: 1.5px;
+    }
 
-    &__link {
-      font-size: 12px;
-      text-decoration: none;
-      color: $dark-grey;
+    &__posts {
+      @include reset-list;
+    }
 
-      &:hover {
-        text-decoration: underline;
-        color: $purple;
+    &__list {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      align-items: center;
+      padding: 15px 0;
+      &:not(:last-child) {
+        border-bottom: 1px dashed $light-grey;
       }
     }
 
     &__img {
-      width: 10px;
-      margin: 8px;
+      width: 40%;
     }
-  }
 
-  &__img {
-    width: 100%;
-    margin-bottom: 20px;
-  }
+    &__details {
+      width: 50%;
+      padding-left: 10px;
+    }
 
-  &__intro {
-    font-weight: 100;
-    color: $dark-grey;
-    width: 70%;
-    margin: 30px auto;
-    text-align: center;
-    font-size: 16px;
-  }
+    &__post-title {
+      font-size: 14px;
+      color: $purple;
+      @extend %no-decoration;
 
-  &__split {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    align-items: center;
-  }
+      &:hover {
+        @extend %u-decoration;
+      }
+    }
 
-  &__img2 {
-    width: $img_width;
-  }
-
-  &__txt {
-    width: calc(100% - #{$img_width});
-  }
-
-  &__p {
-    font-size: 14px;
-    padding: 10px 20px;
-    color: $dark-grey;
+    &__post-date {
+      font-size: 12px;
+      margin: 5px 0 0 0;
+    }
   }
 }
 
