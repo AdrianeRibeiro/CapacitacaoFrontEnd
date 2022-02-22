@@ -1,0 +1,12 @@
+div {
+  width: 500px;
+  height: 500px;
+
+  background-color: red;
+  font-size: 28px;
+  color: white;
+  text-align: center;
+
+  padding-top: 100px;
+  padding-right: 200px;
+}
